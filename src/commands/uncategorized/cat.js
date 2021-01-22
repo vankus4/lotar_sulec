@@ -1,7 +1,6 @@
-const settings = require("../../config/settings");
 const fetch = require('node-fetch');
 
-module.exports.run = function (bot, msg) {
+module.exports.run = function (msg, bot, options) {
     msg.channel.startTyping();
     fetch("http://aws.random.cat/meow").then(response => {
         response.json().then(body=>{
@@ -20,8 +19,10 @@ module.exports.run = function (bot, msg) {
     });
 }
 
-module.exports.help = {
+module.exports.properties = {
     name: "cat",
     description: "sends a random cat picture",
-    usage: `${settings.prefix}cat`
+    usage: "cat",
+    blacklist: [],
+    useBlacklistAsWhitelist: false
 }

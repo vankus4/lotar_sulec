@@ -3,7 +3,6 @@ const client = new Discord.Client();
 const settings = require("./config/settings");
 const tokens = require("./config/tokens");
 const fs = require("fs");
-const path = require("path");
 
 let bot = {};
 bot.commands = {};
@@ -27,10 +26,16 @@ client.on('message', msg => {
     if (!msg.content.startsWith(settings.prefix)) {
         return
     }
-    let commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0]; // get the command name
-    console.log(commandName);
-    if (bot.commands.hasOwnProperty(commandName)){ // if command exists and if is DJ or request is cat/dog
-        bot.commands[commandName].run(bot, msg);
+    let commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0];
+    if (bot.commands.hasOwnProperty(commandName)){
+        let currentdate = new Date()
+        console.log(`${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${msg.author.tag}: ${msg.content}`);
+        let options = msg.content.toLowerCase().slice(settings.prefix.length).split(' ');
+        options.shift();
+        options = options.join("");
+        msg.delete().then(() => {
+            bot.commands[commandName].run(msg, bot, options);
+        });
     }
 });
 
