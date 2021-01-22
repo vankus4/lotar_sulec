@@ -1,0 +1,30 @@
+{
+  "name": "lotar-sulec",
+  "version": "1.0.0",
+  "description": "Discord bot written in NodeJS",
+  "main": "src/bot.js",
+  "scripts": {
+    "start": "node src/bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4li100k/lotar_sulec.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "nodejs",
+    "soundboard"
+  ],
+  "author": "René Michal Cehlár",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/4li100k/lotar_sulec/issues"
+  },
+  "homepage": "https://github.com/4li100k/lotar_sulec#readme",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "node-fetch": "^2.6.1"
+  }
+}
