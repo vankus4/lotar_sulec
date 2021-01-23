@@ -1,3 +1,5 @@
 {
-    "prefix": "!"
+    "prefix": "!",
+    "defaultVolume": 20,
+    "ownerId": "157604397948469248"
 }
