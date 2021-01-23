@@ -16,5 +16,5 @@ module.exports.properties = {
     description: "lists all available commands",
     usage: "help",
     blacklist: [],
-    useBlacklistAsWhitelist: false
+    useWhitelist: false
 }

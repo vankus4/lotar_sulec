@@ -24,5 +24,5 @@ module.exports.properties = {
     description: "sends a random cat picture",
     usage: "cat",
     blacklist: [],
-    useBlacklistAsWhitelist: false
+    useWhitelist: false
 }

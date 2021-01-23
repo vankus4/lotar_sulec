@@ -31,5 +31,5 @@ module.exports.properties = {
     description: "joins your voice channel, if one exists",
     usage: "join",
     blacklist: [],
-    useBlacklistAsWhitelist: true
+    useWhitelist: false
 }

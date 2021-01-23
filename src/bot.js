@@ -7,6 +7,7 @@ const fs = require("fs");
 let bot = {};
 bot.commands = {};
 bot.guilds = {};
+console.log(settings);
 
 console.log("loading commands...");
 let commandsFolder = fs.readdirSync(`${__dirname}/commands`);
@@ -28,15 +29,18 @@ client.on('message', msg => {
         return
     }
     let commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0];
-    if (bot.commands.hasOwnProperty(commandName)) {
-        if (
-            msg.member.id != settings.owner
-            && ((!bot.commands[commandName].properties.useBlacklistAsWhitelist && bot.commands[commandName].properties.blacklist.includes(msg.guild.id))
-                || (bot.commands[commandName].properties.useBlacklistAsWhitelist && !bot.commands[commandName].properties.blacklist.includes(msg.guild.id)))
-        ) {
-            return
-        }
-
+    console.log(msg.member.id.toString());
+    console.log(settings.ownerId);
+    if (
+        bot.commands.hasOwnProperty(commandName) &&
+        (
+            msg.member.id.toString() === settings.ownerId ||
+            (
+                (bot.commands[commandName].properties.useWhitelist && bot.commands[commandName].properties.blacklist.includes(msg.guild.id)) &&
+                (!bot.commands[commandName].properties.useWhitelist && !bot.commands[commandName].properties.blacklist.includes(msg.guild.id))
+            )
+        )
+    ) {
         let currentdate = new Date()
         console.log(`${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${msg.author.tag}: ${msg.content}`);
         let options = msg.content.toLowerCase().slice(settings.prefix.length).split(' ');
