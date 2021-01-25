@@ -25,6 +25,7 @@
   "homepage": "https://github.com/4li100k/lotar_sulec#readme",
   "dependencies": {
     "discord.js": "^12.5.1",
+    "mongodb": "^3.6.3",
     "node-fetch": "^2.6.1"
   }
 }

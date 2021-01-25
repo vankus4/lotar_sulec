@@ -7,7 +7,6 @@ const fs = require("fs");
 let bot = {};
 bot.commands = {};
 bot.guilds = {};
-console.log(settings);
 
 console.log("loading commands...");
 let commandsFolder = fs.readdirSync(`${__dirname}/commands`);
@@ -29,8 +28,6 @@ client.on('message', msg => {
         return
     }
     let commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0];
-    console.log(msg.member.id.toString());
-    console.log(settings.ownerId);
     if (
         bot.commands.hasOwnProperty(commandName) &&
         (
