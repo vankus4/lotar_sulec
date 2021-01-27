@@ -1,5 +1,6 @@
 {
     "prefix": "!",
     "defaultVolume": 20,
-    "ownerId": "157604397948469248"
+    "ownerId": "157604397948469248",
+    "temporaryMessageTimer": 5000
 }

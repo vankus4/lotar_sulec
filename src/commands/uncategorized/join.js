@@ -3,8 +3,7 @@ const settings = require("../../config/settings");
 module.exports.run = function (msg, bot, options) {
     return new Promise(async function (resolve, reject) {
         if (!msg.member || !msg.member.voice || !msg.member.voice.channel) {
-            console.log("cannot connect to channel");
-            return reject("cannot connect to channel");
+            return reject("cannot connect to channel from here");
         }
         let voiceChannel = msg.member.voice.channel;
         if (!bot.guilds[msg.guild.id]) {

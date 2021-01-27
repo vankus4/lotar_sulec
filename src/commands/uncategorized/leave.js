@@ -1,11 +1,14 @@
 const settings = require("../../config/settings");
 
 module.exports.run = function (msg, bot, options) {
-    if (!bot.guilds[msg.guild.id] || !bot.guilds[msg.guild.id].connection) {
-        return
-    }
-    bot.guilds[msg.guild.id].connection.channel.leave();
-    delete bot.guilds[msg.guild.id].connection;
+    return new Promise(function(resolve, reject){
+        if (!msg.guild || !bot.guilds[msg.guild.id] || !bot.guilds[msg.guild.id].connection) {
+            return reject();
+        }
+        bot.guilds[msg.guild.id].connection.channel.leave();
+        delete bot.guilds[msg.guild.id].connection;
+        resolve();
+    });
 }
 
 module.exports.properties = {
