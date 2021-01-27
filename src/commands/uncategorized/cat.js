@@ -1,21 +1,25 @@
 const fetch = require('node-fetch');
 
 module.exports.run = function (msg, bot, options) {
-    msg.channel.startTyping();
-    fetch("http://aws.random.cat/meow").then(response => {
-        response.json().then(body=>{
-            msg.channel.send({
+    return new Promise(function (resolve, reject) {
+        msg.channel.startTyping();
+        fetch("http://aws.random.cat/meow").then(response => {
+            return response.json()
+        }).then(body => {
+            return msg.channel.send({
                 files: [{
                     attachment: body.file,
                     name: `cat.${body.file.split('.')[4]}`
                 }]
             });
-        })
-    }).catch(err => {
-        console.log(err);
-        msg.channel.send("unable to enter the cat dimension");
-    }).then(() => {
-        msg.channel.stopTyping();
+        }).then(sentMsg=>{
+            resolve();
+        }).catch(err => {
+            console.log(err);
+            reject("unable to enter the cat dimension");
+        }).then(() => {
+            msg.channel.stopTyping();
+        });
     });
 }
 

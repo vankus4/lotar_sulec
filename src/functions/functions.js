@@ -1,7 +1,6 @@
 const settings = require("../config/settings");
 
-module.exports.commandIsWhitelisted = function (msg, bot) {
-    let commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0];
+module.exports.commandIsWhitelisted = function (msg, bot, commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0]) {
     return (bot.commands.hasOwnProperty(commandName) && (
         msg.author.id.toString() === settings.ownerId || (msg.guild && (
             (bot.commands[commandName].properties.useWhitelist && bot.commands[commandName].properties.blacklist.includes(msg.guild.id)) ||

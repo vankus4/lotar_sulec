@@ -1,7 +1,9 @@
 const settings = require("../../config/settings");
 
 module.exports.run = function (msg, bot, options) {
-    
+    return new Promise(function(resolve, reject){
+        
+    });
 }
 
 module.exports.properties = {
