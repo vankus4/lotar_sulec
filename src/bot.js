@@ -4,12 +4,19 @@ const settings = require("./config/settings");
 const tokens = require("./config/tokens");
 const fs = require("fs");
 const functions = require("./functions/functions.js");
+const mongoClient = require("mongodb").MongoClient;
 
 let bot = {};
 bot.commands = {};
 bot.reactions = {};
 bot.guilds = {};
 bot.client = client;
+
+mongoClient.connect("mongodb://localhost:27017/").then(async mongoClient => {
+    bot.db = mongoClient.db("discord-bot-db");
+}).catch(err => {
+    console.log(err);
+});
 
 console.log("loading commands...");
 let commandsFolder = fs.readdirSync(`${__dirname}/commands`);
@@ -78,9 +85,14 @@ client.on('messageReactionAdd', (reaction, user) => {
     if (functions.reactionIsWhitelisted(reaction, bot)) {
         bot.reactions[reaction.emoji.name].run(reaction, user, bot).catch(err => {
             if (!err) { return }
+            console.log("reaction error");
             console.log(err);
-            reaction.msg.channel.send(err);
-        })
+            if (err.length) {
+                user.send(err);
+            } else {
+                user.send("Your submission has now expired.")
+            }
+        });
     }
 });
 
