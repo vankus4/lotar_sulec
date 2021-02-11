@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const settings = require("./config/settings");
 const tokens = require("./config/tokens");
 const fs = require("fs");
@@ -18,7 +18,7 @@ mongoClient.connect("mongodb://localhost:27017/").then(async mongoClient => {
     console.log(err);
 });
 
-console.log("loading commands...");
+functions.log("loading commands...");
 let commandsFolder = fs.readdirSync(`${__dirname}/commands`);
 commandsFolder.forEach(folder => {
     files = fs.readdirSync(`${__dirname}/commands/${folder}`);
@@ -27,9 +27,9 @@ commandsFolder.forEach(folder => {
         bot.commands[commandFile.properties.name] = commandFile;
     });
 });
-console.log(`${Object.keys(bot.commands).length} commands loaded`);
+functions.log(`${Object.keys(bot.commands).length} commands loaded`);
 
-console.log("loading reactions...");
+functions.log("loading reactions...");
 let reactionsFolder = fs.readdirSync(`${__dirname}/reactions`);
 reactionsFolder.forEach(folder => {
     files = fs.readdirSync(`${__dirname}/reactions/${folder}`);
@@ -38,10 +38,10 @@ reactionsFolder.forEach(folder => {
         bot.reactions[reactionFile.properties.name] = reactionFile;
     });
 });
-console.log(`${Object.keys(bot.reactions).length} reactions loaded`);
+functions.log(`${Object.keys(bot.reactions).length} reactions loaded`);
 
 client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+    functions.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('message', msg => {
@@ -50,8 +50,7 @@ client.on('message', msg => {
     }
     let commandName = msg.content.toLowerCase().slice(settings.prefix.length).split(' ')[0];
     if (functions.commandIsWhitelisted(msg, bot)) {
-        let currentdate = new Date()
-        console.log(`${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${msg.author.tag}: ${msg.content}`);
+        functions.log(`${msg.author.tag}: ${msg.content}`);
         let options = msg.content.toLowerCase().slice(settings.prefix.length).split(' ');
         options.shift();
         options = options.join("");
@@ -74,35 +73,25 @@ client.on('message', msg => {
 
 client.on('messageReactionAdd', (reaction, user) => {
     if (user.bot) { return }
-    if (functions.reactionIsWhitelisted(reaction, bot)) {
-        bot.reactions[reaction.emoji.name].run(reaction, user, bot).catch(err => {
+    if (reaction.partial) {
+        reaction.fetch().then((fetchedReaction) => {
+            client.emit('messageReactionAdd', fetchedReaction, user);
+        }).catch(error => {
+            console.error('Something went wrong when fetching the message: ', error);
+        });
+    } else if(bot.reactions.hasOwnProperty(reaction.emoji.name)) {
+        bot.reactions[reaction.emoji.name].run(reaction, user, bot).then(resolution => {
+            if (resolution) { functions.log(resolution) }
+        }).catch(err => {
             if (!err) { return }
-            console.log("reaction error");
-            console.log(err);
+            console.error("reaction error", err);
             if (err.length) {
                 user.send(err);
             } else {
-                user.send("Your submission has now expired.")
+                user.send("Your submission has now expired.");
             }
         });
     }
-});
-
-client.on('raw', packet => {
-    if (!['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(packet.t)) return;
-    const channel = client.channels.cache.get(packet.d.channel_id);
-    if (channel.messages.cache.has(packet.d.message_id)) return;
-    channel.messages.fetch(packet.d.message_id).then(message => {
-        const emoji = packet.d.emoji.id ? `${packet.d.emoji.name}:${packet.d.emoji.id}` : packet.d.emoji.name;
-        const reaction = message.reactions.cache.get(emoji);
-        if (reaction) reaction.users.cache.set(packet.d.user_id, client.users.cache.get(packet.d.user_id));
-        if (packet.t === 'MESSAGE_REACTION_ADD') {
-            client.emit('messageReactionAdd', reaction, client.users.cache.get(packet.d.user_id));
-        }
-        if (packet.t === 'MESSAGE_REACTION_REMOVE') {
-            client.emit('messageReactionRemove', reaction, client.users.cache.get(packet.d.user_id));
-        }
-    });
 });
 
 client.login(tokens.botToken);

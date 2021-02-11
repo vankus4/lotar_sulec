@@ -15,3 +15,8 @@ module.exports.reactionIsWhitelisted = function (reaction, bot) {
         (!bot.reactions[reactionName].properties.useWhitelist && !bot.reactions[reactionName].properties.blacklist.includes(reaction.message.guild.id))
     )));
 }
+
+module.exports.log = function (string) {
+    let currentdate = new Date()
+    console.log(`${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${string}`);
+}
