@@ -62,18 +62,10 @@ client.on('message', msg => {
             if (!err) { return }
             console.log(err);
             msg.channel.send(err);
-        })
+        });
     } else {
-        if (msg.channel.type === "text") {
-            msg.delete().then(() => {
-                return msg.channel.send(`unknown command, try ${settings.prefix}help`);
-            }).then(replyMsg => {
-                setTimeout(() => {
-                    replyMsg.delete();
-                }, settings.temporaryMessageTimer);
-            }).catch(err => {
-                console.log(err);
-            });
+        if (msg.channel.type === "dm") {
+            msg.channel.send(`You can only use commands in a guild text channel.`);
         } else {
             msg.channel.send(`unknown command, try ${settings.prefix}help`);
         }

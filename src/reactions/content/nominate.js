@@ -4,27 +4,28 @@ module.exports.run = function (reaction, user, bot) {
     return new Promise(function (resolve, reject) {
         let msg = reaction.message;
         let attachment = msg.attachments.first();
+        if (!attachment) { return reject() }
         let nomination = {};
 
-        user.send(`You nominated a post in **${msg.guild.name}**. Choose a category:`, attachment).then(sentMsg => {
+        user.send(`You nominated a post in **${msg.guild.name}**. Please, reply with a category name: (you have 2 minutes to answer)`, attachment).then(sentMsg => {
             return sentMsg.channel.awaitMessages(m => !m.author.bot, { max: 1, time: 2 * 60 * 1000, errors: ["time"] });
         }).then(collected => {
             console.log(collected.first().content);
             nomination.category = collected.first().content;
-            return user.send(`short description: (you have 2 minutes to answer)`);
+            return user.send(`Short description: (you have 2 minutes to answer)`);
         }).then(sentMsg => {
             return sentMsg.channel.awaitMessages(m => !m.author.bot, { max: 1, time: 2 * 60 * 1000, errors: ["time"] });
         }).then(collected => {
             nomination.description = collected.first().content;
             return bot.client.users.fetch(settings.ownerId);
         }).then(owner => {
-            return owner.send(`**ATTENTION!**\nuser ${user.username} wants to nominate a file,\ncategory: ${nomination.category}\ndescription: ${nomination.description}`, msg.attachments.first());
-        }).then(sentMsg=>{
+            return owner.send(`**ATTENTION!**\nUser ${user.username} wants to nominate a file.\ncategory: ${nomination.category}\ndescription: ${nomination.description}`, attachment);
+        }).then(sentMsg => {
             return sentMsg.react("💚");
-        }).then(reaction=>{
+        }).then(reaction => {
             return reaction.message.react("💔");
         }).then(reaction => {
-            return user.send(`Thank you! Your nomination is now waiting verification.`);
+            return user.send(`Thank you! Your nomination is now awaiting verification.`);
         }).then(sentMsg => {
             resolve();
         }).catch(err => {
